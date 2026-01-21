@@ -114,19 +114,38 @@ final class EnergyMetalRenderer: NSObject {
     // MARK: - Pipeline 设置
     
     private func setupPipelines() throws {
-        // 获取 shader library
-        guard let library = device.makeDefaultLibrary() else {
-            // 尝试从 bundle 加载
-            let bundle = Bundle(for: EnergyMetalRenderer.self)
-            guard let libraryURL = bundle.url(forResource: "default", withExtension: "metallib"),
-                  let lib = try? device.makeLibrary(URL: libraryURL) else {
-                throw EnergyShapeError.shaderCompilationFailed("无法加载 Metal Library")
-            }
-            try setupPipelinesWithLibrary(lib)
+        // 1. 尝试从默认库加载（App 直接包含源码时）
+        if let library = device.makeDefaultLibrary() {
+            try setupPipelinesWithLibrary(library)
             return
         }
         
-        try setupPipelinesWithLibrary(library)
+        // 2. 尝试从 SwiftPM Bundle.module 加载编译后的 metallib
+        #if SWIFT_PACKAGE
+        if let libraryURL = Bundle.module.url(forResource: "default", withExtension: "metallib"),
+           let library = try? device.makeLibrary(URL: libraryURL) {
+            try setupPipelinesWithLibrary(library)
+            return
+        }
+        
+        // 3. 从 Bundle.module 加载 .metal 源码并在运行时编译
+        if let shaderURL = Bundle.module.url(forResource: "Shaders", withExtension: "metal"),
+           let shaderSource = try? String(contentsOf: shaderURL, encoding: .utf8) {
+            let library = try device.makeLibrary(source: shaderSource, options: nil)
+            try setupPipelinesWithLibrary(library)
+            return
+        }
+        #endif
+        
+        // 4. 尝试从当前类所在的 Bundle 加载
+        let classBundle = Bundle(for: EnergyMetalRenderer.self)
+        if let libraryURL = classBundle.url(forResource: "default", withExtension: "metallib"),
+           let library = try? device.makeLibrary(URL: libraryURL) {
+            try setupPipelinesWithLibrary(library)
+            return
+        }
+        
+        throw EnergyShapeError.shaderCompilationFailed("无法加载 Metal Library，请确保 Shaders.metal 文件在正确位置")
     }
     
     private func setupPipelinesWithLibrary(_ library: MTLLibrary) throws {
