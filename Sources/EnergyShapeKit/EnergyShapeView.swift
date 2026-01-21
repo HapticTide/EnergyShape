@@ -21,7 +21,10 @@ public class EnergyShapeView: UIView {
     /// 能量动画的形状路径
     public var shapePath: CGPath? {
         didSet {
-            guard shapePath !== oldValue else { return }
+            // 使用 boundingBox 比较而非引用比较，避免 copy() 后的不必要重建
+            let newBounds = shapePath?.boundingBox ?? .zero
+            guard newBounds != lastPathBounds else { return }
+            lastPathBounds = newBounds
             handleShapePathChanged()
         }
     }
@@ -88,6 +91,12 @@ public class EnergyShapeView: UIView {
     private var isMetalInitialized = false
     private var pendingStart = false
     
+    /// 上一次的 shapePath boundingBox（用于避免不必要的 mask 重建）
+    private var lastPathBounds: CGRect = .zero
+    
+    /// 上一次的视图尺寸（用于避免 layoutSubviews 中重复更新 mask）
+    private var lastBoundsSize: CGSize = .zero
+    
     // MARK: - 初始化
     
     public override init(frame: CGRect) {
@@ -125,9 +134,12 @@ public class EnergyShapeView: UIView {
         
         metalView?.frame = bounds
         
-        // 如果尺寸变化，需要重新生成 mask
-        if let path = shapePath, bounds.size != .zero {
-            updateMaskForCurrentBounds()
+        // 仅当尺寸变化时才重新生成 mask
+        if bounds.size != lastBoundsSize {
+            lastBoundsSize = bounds.size
+            if let _ = shapePath, bounds.size != .zero {
+                updateMaskForCurrentBounds()
+            }
         }
     }
     

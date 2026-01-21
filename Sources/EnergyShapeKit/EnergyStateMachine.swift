@@ -266,17 +266,25 @@ final class EnergyStateMachine {
         let t = min(stateTime / duration, 1.0)
         
         // 线性衰减
+        let intensityDecay = config.settleToIdle ? Float(1.0 - t) : 1.0
         currentParams = AnimationParams(
-            intensity: 1.0,
+            intensity: intensityDecay,
             speed: config.speed * Float(1.0 - t * 0.7),
             noiseStrength: config.noiseStrength * Float(1.0 - t * 0.8)
         )
         
-        // 完成后回到 loop（如果不是 autoSettle 触发的）
+        // settle 完成后的行为
         if t >= 1.0 {
-            stateStartTime = totalTime
-            loopStartTime = totalTime
-            transitionTo(.loop)
+            if config.settleToIdle {
+                // 进入 idle 状态，完全停止动画
+                stopDisplayLink()
+                transitionTo(.idle)
+            } else {
+                // 回到 loop 继续循环
+                stateStartTime = totalTime
+                loopStartTime = totalTime
+                transitionTo(.loop)
+            }
         }
     }
     

@@ -76,6 +76,10 @@ public struct EnergyConfig {
     /// 自动稳定前的循环时间（秒）
     public var autoSettleDelay: TimeInterval = 10.0
     
+    /// settle 完成后是否进入 idle 状态（而非回到 loop）
+    /// 设为 true 时，调用 settle() 后动画会完全停止
+    public var settleToIdle: Bool = false
+    
     // MARK: - 性能配置
     
     /// 最大纹理尺寸（像素）

@@ -330,7 +330,10 @@ final class EnergyMaskCache {
         
         // 计算有符号距离并归一化
         var result = [UInt8](repeating: 0, count: width * height)
-        let maxDist: Float = 32.0
+        
+        // 动态计算 maxDist：取图像较小边的 1/8，最小 16，最大 64
+        let smallerDimension = min(width, height)
+        let maxDist = Float(max(16, min(64, smallerDimension / 8)))
         
         for i in 0..<(width * height) {
             let insideDist = sqrt(Float(gridInside[i].dx * gridInside[i].dx + gridInside[i].dy * gridInside[i].dy))
@@ -480,7 +483,7 @@ final class EnergyMaskCache {
     
     // MARK: - LUT 生成
     
-    /// 生成 256 宽度的 1D 颜色查找表
+    /// 生成 256 宽度的 2D 颜色查找表（高度=1，与 Shader 中的 texture2d 匹配）
     private func generateLUTTexture(from colorStops: [ColorStop]) -> MTLTexture? {
         let width = 256
         var pixels = [UInt8](repeating: 0, count: width * 4)
@@ -500,11 +503,13 @@ final class EnergyMaskCache {
             pixels[i * 4 + 3] = 255
         }
         
-        // 创建 1D 纹理
-        let descriptor = MTLTextureDescriptor()
-        descriptor.textureType = .type1D
-        descriptor.pixelFormat = .rgba8Unorm
-        descriptor.width = width
+        // 创建 2D 纹理（高度=1），与 Shader 中的 texture2d 匹配
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: .rgba8Unorm,
+            width: width,
+            height: 1,
+            mipmapped: false
+        )
         descriptor.usage = [.shaderRead]
         descriptor.storageMode = .shared
         
@@ -513,8 +518,7 @@ final class EnergyMaskCache {
         }
         
         texture.replace(
-            region: MTLRegion(origin: MTLOrigin(x: 0, y: 0, z: 0),
-                              size: MTLSize(width: width, height: 1, depth: 1)),
+            region: MTLRegionMake2D(0, 0, width, 1),
             mipmapLevel: 0,
             withBytes: pixels,
             bytesPerRow: width * 4

@@ -34,6 +34,8 @@ struct EnergyUniforms {
     var ditherEnabled: Float
     var resolution: SIMD2<Float>
     var texelSize: SIMD2<Float>
+    var noiseOctaves: Int32
+    var padding: Int32 = 0  // 保持 16 字节对齐
 }
 
 /// Bloom Uniform
@@ -204,11 +206,44 @@ final class EnergyMetalRenderer: NSObject {
         updateColorLUT(EnergyConfig.defaultColors)
     }
     
+    deinit {
+        // 释放所有 Bloom 纹理回池
+        releaseBloomTextures()
+    }
+    
     // MARK: - 公开方法
     
     /// 更新配置
     func updateConfig(_ config: EnergyConfig) {
+        let oldBloomEnabled = self.config.bloomEnabled
         self.config = config
+        
+        // 如果 Bloom 被禁用，释放相关纹理
+        if oldBloomEnabled && !config.bloomEnabled {
+            releaseBloomTextures()
+        }
+    }
+    
+    /// 释放 Bloom 相关纹理
+    private func releaseBloomTextures() {
+        if let tex = bloomThresholdTexture {
+            texturePool.release(tex)
+            bloomThresholdTexture = nil
+        }
+        if let tex = bloomBlurHTexture {
+            texturePool.release(tex)
+            bloomBlurHTexture = nil
+        }
+        if let tex = bloomBlurVTexture {
+            texturePool.release(tex)
+            bloomBlurVTexture = nil
+        }
+        if let tex = energyOutputTexture {
+            texturePool.release(tex)
+            energyOutputTexture = nil
+        }
+        lastBloomSize = (0, 0)
+        lastEnergySize = (0, 0)
     }
     
     /// 更新动画参数
@@ -403,7 +438,8 @@ extension EnergyMetalRenderer: MTKViewDelegate {
             intensity: animationParams.intensity,
             ditherEnabled: config.ditherEnabled ? 1.0 : 0.0,
             resolution: SIMD2<Float>(Float(width), Float(height)),
-            texelSize: SIMD2<Float>(1.0 / Float(width), 1.0 / Float(height))
+            texelSize: SIMD2<Float>(1.0 / Float(width), 1.0 / Float(height)),
+            noiseOctaves: Int32(config.noiseOctaves)
         )
         
         if config.bloomEnabled, let energyOutputTexture = energyOutputTexture {

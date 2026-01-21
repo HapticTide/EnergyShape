@@ -29,6 +29,8 @@ struct EnergyUniforms {
     float ditherEnabled;    // 是否启用抖动
     float2 resolution;
     float2 texelSize;       // 1.0 / resolution
+    int noiseOctaves;       // FBM 噪声层数
+    int padding;            // 保持 16 字节对齐
 };
 
 /// Bloom Uniform 参数
@@ -229,7 +231,7 @@ fragment float4 fragmentEnergy(
     
     // 2. 生成多层 FBM 噪声
     float2 noiseUV = uv * 4.0;
-    float noise = fbmNoise(noiseUV, uniforms.time, 3);
+    float noise = fbmNoise(noiseUV, uniforms.time, uniforms.noiseOctaves);
     
     // 3. 计算相位（核心流动效果）
     float2 flowDir = normalize(FLOW_DIRECTION);
@@ -302,7 +304,7 @@ fragment float4 fragmentEnergyNoSDF(
     
     // 3. 生成噪声
     float2 noiseUV = uv * 4.0;
-    float noise = fbmNoise(noiseUV, uniforms.time, 3);
+    float noise = fbmNoise(noiseUV, uniforms.time, uniforms.noiseOctaves);
     
     // 4. 计算相位
     float2 flowDir = normalize(FLOW_DIRECTION);

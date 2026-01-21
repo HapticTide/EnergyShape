@@ -92,8 +92,11 @@ final class TexturePool {
         
         var textures = pool[key] ?? []
         
-        // 如果池已满，直接丢弃（让 ARC 释放）
-        guard textures.count < maxIdleTexturesPerSize else { return }
+        // 如果池已满，直接丢弃（让 ARC 释放）并减少内存统计
+        guard textures.count < maxIdleTexturesPerSize else {
+            totalMemoryBytes -= texture.memorySize
+            return
+        }
         
         let pooled = PooledTexture(texture: texture, returnTime: Date())
         textures.append(pooled)
