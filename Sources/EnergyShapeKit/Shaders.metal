@@ -42,7 +42,6 @@ struct BloomUniforms {
 
 // MARK: - 常量
 
-constant float PI = 3.14159265359;
 constant float2 FLOW_DIRECTION = float2(0.7, 0.3);
 
 /// 排列表（全局常量）
