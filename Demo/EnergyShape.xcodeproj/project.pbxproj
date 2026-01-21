@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A40079B12F20EEE000CCD50D /* EnergyShapeKit in Frameworks */ = {isa = PBXBuildFile; productRef = A40079B02F20EEE000CCD50D /* EnergyShapeKit */; };
 		B1000001261F000100000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000261F000100000001 /* AppDelegate.swift */; };
 		B1000003261F000100000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002261F000100000002 /* SceneDelegate.swift */; };
 		B1000005261F000100000003 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000004261F000100000003 /* DemoViewController.swift */; };
@@ -23,7 +24,6 @@
 		B1000006261F000100000004 /* AppleLogoPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLogoPath.swift; sourceTree = "<group>"; };
 		B1000008261F000100000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B100000C261F000100000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B100000D261F000100000007 /* EnergyShapeKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = EnergyShapeKit; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +32,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B100000B261F000100000006 /* EnergyShapeKit in Frameworks */,
+				A40079B12F20EEE000CCD50D /* EnergyShapeKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,7 +59,6 @@
 		B100000E261F000100000008 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				B100000D261F000100000007 /* EnergyShapeKit */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -94,6 +94,7 @@
 			name = EnergyShapeDemo;
 			packageProductDependencies = (
 				B100000A261F000100000006 /* EnergyShapeKit */,
+				A40079B02F20EEE000CCD50D /* EnergyShapeKit */,
 			);
 			productName = EnergyShapeDemo;
 			productReference = B0FFFFFE261F000100000001 /* EnergyShapeDemo.app */;
@@ -124,7 +125,7 @@
 			);
 			mainGroup = B0FFFFF5261F000100000001;
 			packageReferences = (
-				B100000F261F000100000009 /* XCLocalSwiftPackageReference ".." */,
+				A40079AF2F20EEE000CCD50D /* XCLocalSwiftPackageReference "../../EnergyShape" */,
 			);
 			productRefGroup = B0FFFFFA261F000100000001 /* Products */;
 			projectDirPath = "";
@@ -169,7 +170,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "EnergyShapeDemo/Info.plist";
+				INFOPLIST_FILE = EnergyShapeDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -196,7 +197,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "EnergyShapeDemo/Info.plist";
+				INFOPLIST_FILE = EnergyShapeDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -358,13 +359,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		B100000F261F000100000009 /* XCLocalSwiftPackageReference ".." */ = {
+		A40079AF2F20EEE000CCD50D /* XCLocalSwiftPackageReference "../../EnergyShape" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "..";
+			relativePath = ../../EnergyShape;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A40079B02F20EEE000CCD50D /* EnergyShapeKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = EnergyShapeKit;
+		};
 		B100000A261F000100000006 /* EnergyShapeKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = EnergyShapeKit;
