@@ -190,7 +190,7 @@ public class EnergyShapeView: UIView {
         guard !isMetalInitialized else { return }
         
         guard let device = MTLCreateSystemDefaultDevice() else {
-            handleError(.metalNotSupported)
+            handleError(EnergyShapeError.metalNotSupported)
             return
         }
         
