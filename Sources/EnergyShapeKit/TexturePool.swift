@@ -8,6 +8,9 @@
 
 import Metal
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 // MARK: - 纹理池
 
@@ -35,13 +38,15 @@ final class TexturePool {
     init(device: MTLDevice) {
         self.device = device
         
-        // 监听内存警告
+        // 监听内存警告（仅 iOS/tvOS）
+        #if canImport(UIKit) && !os(watchOS)
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleMemoryWarning),
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
+        #endif
     }
     
     deinit {
@@ -172,6 +177,21 @@ private struct TextureKey: Hashable {
     let height: Int
     let format: MTLPixelFormat
     let usage: MTLTextureUsage
+    
+    // 显式实现 Hashable，因为 MTLPixelFormat 和 MTLTextureUsage 需要用 rawValue
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(width)
+        hasher.combine(height)
+        hasher.combine(format.rawValue)
+        hasher.combine(usage.rawValue)
+    }
+    
+    static func == (lhs: TextureKey, rhs: TextureKey) -> Bool {
+        return lhs.width == rhs.width &&
+               lhs.height == rhs.height &&
+               lhs.format == rhs.format &&
+               lhs.usage == rhs.usage
+    }
 }
 
 /// 池化纹理
