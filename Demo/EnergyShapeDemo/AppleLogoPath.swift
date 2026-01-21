@@ -1,6 +1,6 @@
 //
 //  AppleLogoPath.swift
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  Apple Logo CGPath 数据（仅用于 Demo）

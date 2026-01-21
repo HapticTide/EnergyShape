@@ -1,6 +1,6 @@
 //
 //  Shaders.metal
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  能量动画 GPU 着色器

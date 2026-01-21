@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import EnergyShapeKit
+import EnergyShape
 
 /// 能量动画演示控制器
 public class DemoViewController: UIViewController {

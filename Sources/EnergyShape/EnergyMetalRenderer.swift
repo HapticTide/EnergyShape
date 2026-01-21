@@ -1,6 +1,6 @@
 //
 //  EnergyMetalRenderer.swift
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  Metal 渲染核心 - 整合所有渲染 Pass

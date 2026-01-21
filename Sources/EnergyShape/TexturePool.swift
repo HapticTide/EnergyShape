@@ -1,6 +1,6 @@
 //
 //  TexturePool.swift
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  纹理复用池 - 避免频繁创建/销毁 Metal 纹理

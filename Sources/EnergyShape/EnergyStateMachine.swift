@@ -1,6 +1,6 @@
 //
 //  EnergyStateMachine.swift
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  动画状态机 - 管理动画生命周期与参数插值

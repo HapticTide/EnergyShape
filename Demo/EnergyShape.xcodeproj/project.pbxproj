@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A40079B12F20EEE000CCD50D /* EnergyShapeKit in Frameworks */ = {isa = PBXBuildFile; productRef = A40079B02F20EEE000CCD50D /* EnergyShapeKit */; };
+		A40079B42F20F3F300CCD50D /* EnergyShape in Frameworks */ = {isa = PBXBuildFile; productRef = A40079B32F20F3F300CCD50D /* EnergyShape */; };
 		B1000001261F000100000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000261F000100000001 /* AppDelegate.swift */; };
 		B1000003261F000100000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002261F000100000002 /* SceneDelegate.swift */; };
 		B1000005261F000100000003 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000004261F000100000003 /* DemoViewController.swift */; };
 		B1000007261F000100000004 /* AppleLogoPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000006261F000100000004 /* AppleLogoPath.swift */; };
 		B1000009261F000100000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000008261F000100000005 /* Assets.xcassets */; };
-		B100000B261F000100000006 /* EnergyShapeKit in Frameworks */ = {isa = PBXBuildFile; productRef = B100000A261F000100000006 /* EnergyShapeKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,19 +30,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B100000B261F000100000006 /* EnergyShapeKit in Frameworks */,
-				A40079B12F20EEE000CCD50D /* EnergyShapeKit in Frameworks */,
+				A40079B42F20F3F300CCD50D /* EnergyShape in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A40079B22F20F3F300CCD50D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B0FFFFF5261F000100000001 = {
 			isa = PBXGroup;
 			children = (
 				B100000E261F000100000008 /* Packages */,
 				B1000010261F000100000001 /* EnergyShapeDemo */,
+				A40079B22F20F3F300CCD50D /* Frameworks */,
 				B0FFFFFA261F000100000001 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -93,8 +99,7 @@
 			);
 			name = EnergyShapeDemo;
 			packageProductDependencies = (
-				B100000A261F000100000006 /* EnergyShapeKit */,
-				A40079B02F20EEE000CCD50D /* EnergyShapeKit */,
+				A40079B32F20F3F300CCD50D /* EnergyShape */,
 			);
 			productName = EnergyShapeDemo;
 			productReference = B0FFFFFE261F000100000001 /* EnergyShapeDemo.app */;
@@ -108,7 +113,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					B0FFFFFD261F000100000001 = {
 						CreatedOnToolsVersion = 15.0;
@@ -274,6 +279,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -330,6 +336,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -366,13 +373,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		A40079B02F20EEE000CCD50D /* EnergyShapeKit */ = {
+		A40079B32F20F3F300CCD50D /* EnergyShape */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = EnergyShapeKit;
-		};
-		B100000A261F000100000006 /* EnergyShapeKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = EnergyShapeKit;
+			package = A40079AF2F20EEE000CCD50D /* XCLocalSwiftPackageReference "../../EnergyShape" */;
+			productName = EnergyShape;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

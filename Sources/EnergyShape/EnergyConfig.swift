@@ -1,6 +1,6 @@
 //
 //  EnergyConfig.swift
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  能量动画配置参数

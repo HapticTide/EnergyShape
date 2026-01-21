@@ -1,6 +1,6 @@
 //
 //  EnergyMaskCache.swift
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  Mask/SDF 缓存管理 - 支持后台生成与无缝切换

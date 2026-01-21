@@ -1,14 +1,14 @@
 //
-//  EnergyShapeKitTests.swift
-//  EnergyShapeKit
+//  EnergyShapeTests.swift
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //
 
 import XCTest
-@testable import EnergyShapeKit
+@testable import EnergyShape
 
-final class EnergyShapeKitTests: XCTestCase {
+final class EnergyShapeTests: XCTestCase {
     
     func testConfigValidation() throws {
         var config = EnergyConfig()

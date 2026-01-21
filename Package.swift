@@ -4,15 +4,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "EnergyShapeKit",
+    name: "EnergyShape",
     platforms: [
         .iOS(.v14)
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "EnergyShapeKit",
-            targets: ["EnergyShapeKit"]
+            name: "EnergyShape",
+            targets: ["EnergyShape"]
         ),
     ],
     dependencies: [
@@ -22,9 +22,9 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "EnergyShapeKit",
+            name: "EnergyShape",
             dependencies: [],
-            path: "Sources/EnergyShapeKit",
+            path: "Sources/EnergyShape",
             exclude: [],
             sources: nil,
             resources: [
@@ -36,9 +36,9 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "EnergyShapeKitTests",
-            dependencies: ["EnergyShapeKit"],
-            path: "Tests/EnergyShapeKitTests"
+            name: "EnergyShapeTests",
+            dependencies: ["EnergyShape"],
+            path: "Tests/EnergyShapeTests"
         ),
     ]
 )

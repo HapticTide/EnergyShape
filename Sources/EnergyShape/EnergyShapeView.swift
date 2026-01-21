@@ -1,6 +1,6 @@
 //
 //  EnergyShapeView.swift
-//  EnergyShapeKit
+//  EnergyShape
 //
 //  Created by Sun on 2026/1/21.
 //  能量动画视图 - 对外 API 封装

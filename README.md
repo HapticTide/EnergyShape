@@ -37,7 +37,7 @@ dependencies: [
 ## 🚀 快速开始
 
 ```swift
-import EnergyShapeKit
+import EnergyShape
 
 // 创建能量视图
 let energyView = EnergyShapeView(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
@@ -84,7 +84,7 @@ energyView.start()
 EnergyShape/
 ├── Package.swift                 # SwiftPM 配置
 ├── Sources/
-│   └── EnergyShapeKit/
+│   └── EnergyShape/
 │       ├── EnergyConfig.swift        # 配置参数
 │       ├── EnergyShapeView.swift     # 公开 API
 │       ├── EnergyMetalRenderer.swift # Metal 渲染
@@ -93,7 +93,7 @@ EnergyShape/
 │       ├── TexturePool.swift         # 纹理复用池
 │       └── Shaders.metal             # GPU 着色器
 ├── Tests/
-│   └── EnergyShapeKitTests/
+│   └── EnergyShapeTests/
 └── Demo/
     └── EnergyShape.xcodeproj         # Demo 工程
 ```
