@@ -32,7 +32,16 @@ enum ShapeType: Int, CaseIterable {
 public class DemoViewController: UIViewController {
     // MARK: - UI 组件
 
-    /// 能量视图（全屏，置于最上层但关闭交互）
+    /// 能量视图容器（全屏，禁用交互以穿透到下层控制面板）
+    private lazy var energyContainer: UIView = {
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.isUserInteractionEnabled = false
+        container.backgroundColor = .clear
+        return container
+    }()
+
+    /// 能量视图
     private var energyView: EnergyShapeView!
     
     /// 是否启用 MSAA（运行时切换会重建视图）
@@ -90,7 +99,6 @@ public class DemoViewController: UIViewController {
         newView.delegate = self
         newView.translatesAutoresizingMaskIntoConstraints = false
         newView.contentInset = .zero
-        newView.isUserInteractionEnabled = false
         newView.msaaEnabled = isMSAAEnabled
         energyView = newView
     }
@@ -108,16 +116,15 @@ public class DemoViewController: UIViewController {
         // 创建新视图
         createEnergyView()
         
-        // 添加到视图层级（在 statsView 下方，在 controlPanel 上方）
-        view.insertSubview(energyView, belowSubview: statsView)
-        energyView.isUserInteractionEnabled = false
+        // 添加到容器（不影响其他视图层级）
+        energyContainer.addSubview(energyView)
         
         // 设置约束
         NSLayoutConstraint.activate([
-            energyView.topAnchor.constraint(equalTo: view.topAnchor),
-            energyView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            energyView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            energyView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            energyView.topAnchor.constraint(equalTo: energyContainer.topAnchor),
+            energyView.leadingAnchor.constraint(equalTo: energyContainer.leadingAnchor),
+            energyView.trailingAnchor.constraint(equalTo: energyContainer.trailingAnchor),
+            energyView.bottomAnchor.constraint(equalTo: energyContainer.bottomAnchor),
         ])
         
         // 恢复配置
@@ -151,25 +158,34 @@ public class DemoViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .black
 
-        // 添加控制面板（最底层）
-        view.addSubview(controlPanel)
+        // 层级顺序（从底到顶）：energyContainer → controlPanel → statsView
+        // energyContainer 禁用交互，所以 controlPanel 可以接收触摸
 
-        // 添加能量视图（中间层，禁用交互以穿透到下层）
-        view.addSubview(energyView)
-        energyView.isUserInteractionEnabled = false
+        // 添加能量视图容器（最底层，全屏，禁用交互）
+        view.addSubview(energyContainer)
+        energyContainer.addSubview(energyView)
+
+        // 添加控制面板（中间层）
+        view.addSubview(controlPanel)
 
         // 添加性能统计视图（最上层）
         view.addSubview(statsView)
 
         // 设置约束
         NSLayoutConstraint.activate([
-            // 能量视图 - 全屏
-            energyView.topAnchor.constraint(equalTo: view.topAnchor),
-            energyView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            energyView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            energyView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            // 能量视图容器 - 全屏
+            energyContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            energyContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            energyContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            energyContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            // 性能统计视图 - 左上角固定位置
+            // 能量视图 - 填满容器
+            energyView.topAnchor.constraint(equalTo: energyContainer.topAnchor),
+            energyView.leadingAnchor.constraint(equalTo: energyContainer.leadingAnchor),
+            energyView.trailingAnchor.constraint(equalTo: energyContainer.trailingAnchor),
+            energyView.bottomAnchor.constraint(equalTo: energyContainer.bottomAnchor),
+
+            // 性能统计视图 - 顶部居中
             statsView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             statsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             statsView.widthAnchor.constraint(equalToConstant: 200),
