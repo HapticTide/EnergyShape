@@ -40,8 +40,20 @@ public struct EnergyConfig {
     // MARK: - 边框发光参数
 
     /// 边框宽度 [0.005 ~ 0.1]，默认 0.008（相对于视图尺寸的比例）
-    /// 值越大边框越粗，全屏场景建议使用较小值以保持贴边感
+    /// 控制边框发光的衰减速度，值越大光晕越宽越柔和
     public var borderWidth: Float = 0.008
+    
+    /// 边框厚度 [0 ~ 0.1]，默认 0.0（相对于视图尺寸的比例）
+    /// 定义边框带的像素宽度，在此范围内保持高亮，然后再衰减
+    /// - 值为 0 时退化为纯发光衰减模式（原有行为）
+    /// - 值 > 0 时产生清晰可见的边框带
+    public var borderThickness: Float = 0.0
+    
+    /// 边框柔和度 [0 ~ 1.0]，默认 0.5
+    /// 控制边框带内的亮度分布：
+    /// - 0.0: 边框带内完全均匀亮度
+    /// - 1.0: 边框带内从边缘向内逐渐衰减
+    public var borderSoftness: Float = 0.5
 
     /// 内发光强度 [0 ~ 1.0]，默认 0.35
     /// 控制边框向形状内部的发光扩散强度
@@ -164,6 +176,8 @@ public struct EnergyConfig {
 
         // 边框发光参数验证
         borderWidth = max(0.005, min(0.1, borderWidth))
+        borderThickness = max(0.0, min(0.1, borderThickness))
+        borderSoftness = max(0.0, min(1.0, borderSoftness))
         innerGlowIntensity = max(0.0, min(1.0, innerGlowIntensity))
         innerGlowRange = max(0.01, min(0.5, innerGlowRange))
         outerGlowIntensity = max(0.0, min(1.0, outerGlowIntensity))

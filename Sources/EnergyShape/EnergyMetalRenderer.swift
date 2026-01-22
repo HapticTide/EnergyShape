@@ -58,6 +58,8 @@ struct EnergyUniforms {
 
     // 边框发光参数（像素单位）
     var borderWidth: Float = 2.0
+    var borderThickness: Float = 0.0
+    var borderSoftness: Float = 0.5
     var innerGlowIntensity: Float = 0.3
     var innerGlowRange: Float = 15.0
     var outerGlowIntensity: Float = 0.2
@@ -885,6 +887,8 @@ extension EnergyMetalRenderer: MTKViewDelegate {
 
         // 设置边框发光参数（转换为像素单位）
         energyUniforms.borderWidth = config.borderWidth * minDimension
+        energyUniforms.borderThickness = config.borderThickness * minDimension
+        energyUniforms.borderSoftness = config.borderSoftness
         energyUniforms.innerGlowIntensity = config.innerGlowIntensity
         energyUniforms.innerGlowRange = config.innerGlowRange * minDimension
         energyUniforms.outerGlowIntensity = config.outerGlowIntensity

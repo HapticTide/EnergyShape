@@ -58,7 +58,9 @@ struct EnergyUniforms {
     float color5Pos;
     
     // 边框发光参数
-    float borderWidth;       // 边框宽度（像素单位）
+    float borderWidth;       // 边框宽度（像素单位）- 控制发光衰减速度
+    float borderThickness;   // 边框厚度（像素单位）- 边框带的实际宽度
+    float borderSoftness;    // 边框柔和度 [0~1]：0=均匀亮度，1=渐变
     float innerGlowIntensity; // 内发光强度
     float innerGlowRange;    // 内发光范围（像素单位）
     float outerGlowIntensity; // 外发光强度
@@ -614,9 +616,31 @@ fragment float4 fragmentEnergy(
     }
     
     // 6. 边框发光（仅在内部，从边缘向内衰减）
+    // 支持 borderThickness：定义边框带宽度，在此范围内保持高亮
     float borderGlow = 0.0;
     if (signedDistPx >= 0.0) {
-        borderGlow = exp(-innerDist / max(uniforms.borderWidth, 1.0)) * uniforms.glowIntensity;
+        float thickness = uniforms.borderThickness;
+        float softness = uniforms.borderSoftness;
+        
+        if (thickness > 0.1) {
+            // 边框带模式：在 thickness 范围内保持高亮
+            if (innerDist < thickness) {
+                // 在边框带内
+                float t = innerDist / thickness;  // [0, 1]
+                // softness 控制带内的渐变程度
+                // softness = 0: 完全均匀
+                // softness = 1: 从边缘(1.0)渐变到内边缘(0.5)
+                float bandIntensity = mix(1.0, 1.0 - t * 0.5, softness);
+                borderGlow = bandIntensity * uniforms.glowIntensity;
+            } else {
+                // 超出边框带：按原逻辑衰减
+                float distBeyondBorder = innerDist - thickness;
+                borderGlow = exp(-distBeyondBorder / max(uniforms.borderWidth, 1.0)) * uniforms.glowIntensity;
+            }
+        } else {
+            // 纯发光衰减模式（原有行为）
+            borderGlow = exp(-innerDist / max(uniforms.borderWidth, 1.0)) * uniforms.glowIntensity;
+        }
     }
     
     // 7. 内发光（从边缘向内部扩散，仅在内部）
@@ -640,7 +664,9 @@ fragment float4 fragmentEnergy(
     float totalGlow = borderGlow + innerGlow + outerGlow;
     
     // 边缘增强（仅在内部边缘附近）
-    if (signedDistPx >= 0.0 && innerDist < uniforms.borderWidth * 3.0) {
+    // 考虑 borderThickness：在边框带及其周边区域应用增强
+    float edgeEnhanceRange = max(uniforms.borderThickness, uniforms.borderWidth) * 3.0;
+    if (signedDistPx >= 0.0 && innerDist < edgeEnhanceRange) {
         totalGlow *= (1.0 + uniforms.edgeBoost * exp(-innerDist * 0.3));
     }
     
@@ -730,10 +756,29 @@ fragment float4 fragmentEnergyAnalytic(
     }
     
     // 7. 边框发光（仅在内部，从边缘向内衰减）
+    // 支持 borderThickness：定义边框带宽度，在此范围内保持高亮
     float borderGlow = 0.0;
     if (signedDistPx <= 0.0) {
-        // 在内部：边缘处最亮，向内衰减
-        borderGlow = exp(-innerDist / max(uniforms.borderWidth, 1.0)) * uniforms.glowIntensity;
+        float thickness = uniforms.borderThickness;
+        float softness = uniforms.borderSoftness;
+        
+        if (thickness > 0.1) {
+            // 边框带模式：在 thickness 范围内保持高亮
+            if (innerDist < thickness) {
+                // 在边框带内
+                float t = innerDist / thickness;  // [0, 1]
+                // softness 控制带内的渐变程度
+                float bandIntensity = mix(1.0, 1.0 - t * 0.5, softness);
+                borderGlow = bandIntensity * uniforms.glowIntensity;
+            } else {
+                // 超出边框带：按原逻辑衰减
+                float distBeyondBorder = innerDist - thickness;
+                borderGlow = exp(-distBeyondBorder / max(uniforms.borderWidth, 1.0)) * uniforms.glowIntensity;
+            }
+        } else {
+            // 纯发光衰减模式（原有行为）
+            borderGlow = exp(-innerDist / max(uniforms.borderWidth, 1.0)) * uniforms.glowIntensity;
+        }
     }
     
     // 8. 内发光（从边缘向内部扩散，仅在内部）
@@ -759,7 +804,9 @@ fragment float4 fragmentEnergyAnalytic(
     float totalGlow = borderGlow + innerGlow + outerGlow;
     
     // 边缘增强（仅在内部边缘附近）
-    if (signedDistPx <= 0.0 && innerDist < uniforms.borderWidth * 3.0) {
+    // 考虑 borderThickness：在边框带及其周边区域应用增强
+    float edgeEnhanceRange = max(uniforms.borderThickness, uniforms.borderWidth) * 3.0;
+    if (signedDistPx <= 0.0 && innerDist < edgeEnhanceRange) {
         totalGlow *= (1.0 + uniforms.edgeBoost * exp(-innerDist * 0.3));
     }
     
@@ -848,8 +895,27 @@ fragment float4 fragmentEnergyNoSDF(
     float depth = (mask - 0.5) * 2.0;
     float absDepth = abs(depth);
     
-    // 3. 边框核心发光
-    float borderGlow = exp(-absDepth * 10.0 / max(uniforms.borderWidth, 0.1)) * uniforms.glowIntensity;
+    // 3. 边框核心发光（支持 borderThickness）
+    // 注意：Mask 模式下 depth 范围约 [-1, 1]，需要缩放
+    float thickness = uniforms.borderThickness * 0.1;  // 归一化到 depth 空间
+    float softness = uniforms.borderSoftness;
+    float borderGlow = 0.0;
+    
+    if (thickness > 0.001 && depth > 0.0) {
+        // 边框带模式
+        float innerDist = depth;  // 内部距离（归一化）
+        if (innerDist < thickness) {
+            float t = innerDist / thickness;
+            float bandIntensity = mix(1.0, 1.0 - t * 0.5, softness);
+            borderGlow = bandIntensity * uniforms.glowIntensity;
+        } else {
+            float distBeyondBorder = innerDist - thickness;
+            borderGlow = exp(-distBeyondBorder * 10.0 / max(uniforms.borderWidth, 0.1)) * uniforms.glowIntensity;
+        }
+    } else {
+        // 纯发光衰减模式（原有行为）
+        borderGlow = exp(-absDepth * 10.0 / max(uniforms.borderWidth, 0.1)) * uniforms.glowIntensity;
+    }
     borderGlow = max(borderGlow, edgeStrength * 0.8 * uniforms.glowIntensity);
     
     // 4. 内发光（从边缘向内部扩散）

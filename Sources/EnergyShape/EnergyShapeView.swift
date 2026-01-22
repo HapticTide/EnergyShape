@@ -227,6 +227,9 @@ public class EnergyShapeView: UIView {
     public func resume() {
         guard animationState == .paused else { return }
 
+        // 重置 lastFrameTime，避免计算出过大的帧时间差
+        lastFrameTime = 0
+        
         stateMachine?.resume()
         metalView?.isPaused = false
         // 恢复到之前的状态（由状态机管理）
@@ -623,13 +626,22 @@ public class EnergyShapeView: UIView {
 extension EnergyShapeView: EnergyMetalRendererDelegate {
     func rendererDidFinishFrame(_ renderer: EnergyMetalRenderer, cpuTime: Double, gpuTime: Double) {
         let currentTime = CACurrentMediaTime()
-        let frameTime = lastFrameTime > 0 ? currentTime - lastFrameTime : 1.0 / 60.0
+        
+        // 只有当 lastFrameTime 有效时才计算帧时间并更新统计
+        // 第一帧跳过，避免使用虚假的默认值污染平均值
+        if lastFrameTime > 0 {
+            let frameTime = currentTime - lastFrameTime
+            updatePerformanceStats(frameTime: frameTime)
+        }
         lastFrameTime = currentTime
 
         _performanceStats.cpuTime = cpuTime * 1000 // 转换为毫秒
         _performanceStats.gpuTime = gpuTime * 1000
-
-        updatePerformanceStats(frameTime: frameTime)
+        
+        // 第一帧时也需要通知代理
+        if frameTimeAccumulator.isEmpty {
+            delegate?.energyShapeView(self, didUpdateStats: _performanceStats)
+        }
     }
 
     func renderer(_ renderer: EnergyMetalRenderer, didFailWithError error: Error) {

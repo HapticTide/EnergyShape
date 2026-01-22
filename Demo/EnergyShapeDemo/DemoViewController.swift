@@ -311,6 +311,16 @@ extension DemoViewController: ControlPanelDelegate {
         currentConfig.borderWidth = value
         energyView.config = currentConfig
     }
+    
+    func panelDidChangeBorderThickness(_ panel: ControlPanel, value: Float) {
+        currentConfig.borderThickness = value
+        energyView.config = currentConfig
+    }
+    
+    func panelDidChangeBorderSoftness(_ panel: ControlPanel, value: Float) {
+        currentConfig.borderSoftness = value
+        energyView.config = currentConfig
+    }
 
     func panelDidChangeInnerGlow(_ panel: ControlPanel, value: Float) {
         currentConfig.innerGlowIntensity = value
@@ -489,6 +499,8 @@ protocol ControlPanelDelegate: AnyObject {
     func panelDidChangeBloomIntensity(_ panel: ControlPanel, value: Float)
     // 边框发光参数
     func panelDidChangeBorderWidth(_ panel: ControlPanel, value: Float)
+    func panelDidChangeBorderThickness(_ panel: ControlPanel, value: Float)
+    func panelDidChangeBorderSoftness(_ panel: ControlPanel, value: Float)
     func panelDidChangeInnerGlow(_ panel: ControlPanel, value: Float)
     func panelDidChangeInnerGlowRange(_ panel: ControlPanel, value: Float)
     func panelDidChangeContentInset(_ panel: ControlPanel, value: Float)
@@ -587,6 +599,8 @@ class ControlPanel: UIView {
 
     // 边框发光参数滑块
     private lazy var borderWidthSlider: UISlider = createSlider(min: 0.005, max: 0.08, value: 0.018)
+    private lazy var borderThicknessSlider: UISlider = createSlider(min: 0, max: 0.05, value: 0.0)
+    private lazy var borderSoftnessSlider: UISlider = createSlider(min: 0, max: 1.0, value: 0.5)
     private lazy var innerGlowSlider: UISlider = createSlider(min: 0, max: 1.0, value: 0.45)
     private lazy var innerGlowRangeSlider: UISlider = createSlider(min: 0.01, max: 0.5, value: 0.2)
     private lazy var contentInsetSlider: UISlider = createSlider(min: 0, max: 60, value: 0)
@@ -684,6 +698,16 @@ class ControlPanel: UIView {
             label: "边框宽度",
             slider: borderWidthSlider,
             action: #selector(borderWidthChanged)
+        ))
+        scrollContentStack.addArrangedSubview(createSliderRow(
+            label: "边框厚度",
+            slider: borderThicknessSlider,
+            action: #selector(borderThicknessChanged)
+        ))
+        scrollContentStack.addArrangedSubview(createSliderRow(
+            label: "边框柔和度",
+            slider: borderSoftnessSlider,
+            action: #selector(borderSoftnessChanged)
         ))
         scrollContentStack.addArrangedSubview(createSliderRow(
             label: "内发光",
@@ -962,6 +986,8 @@ class ControlPanel: UIView {
 
         // 边框发光参数
         borderWidthSlider.value = config.borderWidth
+        borderThicknessSlider.value = config.borderThickness
+        borderSoftnessSlider.value = config.borderSoftness
         innerGlowSlider.value = config.innerGlowIntensity
         innerGlowRangeSlider.value = config.innerGlowRange
         
@@ -978,6 +1004,8 @@ class ControlPanel: UIView {
         updateValueLabel(for: edgeBoostSlider)
         updateValueLabel(for: bloomIntensitySlider)
         updateValueLabel(for: borderWidthSlider)
+        updateValueLabel(for: borderThicknessSlider)
+        updateValueLabel(for: borderSoftnessSlider)
         updateValueLabel(for: innerGlowSlider)
         updateValueLabel(for: innerGlowRangeSlider)
         updateValueLabel(for: outerGlowSlider)
@@ -1027,6 +1055,16 @@ class ControlPanel: UIView {
     @objc private func borderWidthChanged(_ sender: UISlider) {
         updateValueLabel(for: sender)
         delegate?.panelDidChangeBorderWidth(self, value: sender.value)
+    }
+    
+    @objc private func borderThicknessChanged(_ sender: UISlider) {
+        updateValueLabel(for: sender)
+        delegate?.panelDidChangeBorderThickness(self, value: sender.value)
+    }
+    
+    @objc private func borderSoftnessChanged(_ sender: UISlider) {
+        updateValueLabel(for: sender)
+        delegate?.panelDidChangeBorderSoftness(self, value: sender.value)
     }
 
     @objc private func innerGlowChanged(_ sender: UISlider) {

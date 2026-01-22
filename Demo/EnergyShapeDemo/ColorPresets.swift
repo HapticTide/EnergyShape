@@ -95,13 +95,14 @@ enum ColorPresets {
     // MARK: - 蓝色系（Ocean Blue）
 
     /// 蓝色系配色 - 纯蓝色调渐变
-    /// 设计灵感：深海渐变、科技感、冷静优雅
+    /// 基于 #2F00FF 和 #2759FF 生成的相近蓝色
     static let oceanBlueColors: [ColorStop] = [
-        ColorStop(position: 0.0, color: UIColor(hex: 0x1a237e)), // 深靛蓝
-        ColorStop(position: 0.25, color: UIColor(hex: 0x3949ab)), // 靛蓝
-        ColorStop(position: 0.5, color: UIColor(hex: 0x5c6bc0)), // 蓝紫
-        ColorStop(position: 0.75, color: UIColor(hex: 0x7986cb)), // 浅蓝紫
-        ColorStop(position: 1.0, color: UIColor(hex: 0x1a237e)), // 深靛蓝（循环）
+        ColorStop(position: 0.0, color: UIColor(hex: 0x2F00FF)), // 主蓝 1
+        ColorStop(position: 0.2, color: UIColor(hex: 0x3020FF)), // 过渡蓝
+        ColorStop(position: 0.4, color: UIColor(hex: 0x2840FF)), // 中间蓝
+        ColorStop(position: 0.6, color: UIColor(hex: 0x2759FF)), // 主蓝 2
+        ColorStop(position: 0.8, color: UIColor(hex: 0x2045FF)), // 深明亮蓝
+        ColorStop(position: 1.0, color: UIColor(hex: 0x2F00FF)), // 主蓝 1（循环）
     ]
 
     /// 蓝色系完整配置
