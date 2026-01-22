@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "EnergyShape",
     platforms: [
-        .iOS(.v14)
+        .iOS(.v14),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -29,10 +29,10 @@ let package = Package(
             sources: nil,
             resources: [
                 // 包含 Metal shader 源文件，运行时编译
-                .process("Shaders.metal")
+                .process("Shaders.metal"),
             ],
             swiftSettings: [
-                .define("DEBUG", .when(configuration: .debug))
+                .define("DEBUG", .when(configuration: .debug)),
             ]
         ),
         .testTarget(

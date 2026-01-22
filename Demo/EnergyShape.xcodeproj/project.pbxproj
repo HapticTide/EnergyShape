@@ -8,19 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		A40079B42F20F3F300CCD50D /* EnergyShape in Frameworks */ = {isa = PBXBuildFile; productRef = A40079B32F20F3F300CCD50D /* EnergyShape */; };
+		A40079B72F20F4BB00CCD50D /* LookinServer in Frameworks */ = {isa = PBXBuildFile; productRef = A40079B62F20F4BB00CCD50D /* LookinServer */; };
+		A4007A022F21187D00CCD50D /* ColorPresets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4007A012F21187D00CCD50D /* ColorPresets.swift */; };
 		B1000001261F000100000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000261F000100000001 /* AppDelegate.swift */; };
 		B1000003261F000100000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002261F000100000002 /* SceneDelegate.swift */; };
 		B1000005261F000100000003 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000004261F000100000003 /* DemoViewController.swift */; };
-		B1000007261F000100000004 /* AppleLogoPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000006261F000100000004 /* AppleLogoPath.swift */; };
 		B1000009261F000100000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000008261F000100000005 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A4007A012F21187D00CCD50D /* ColorPresets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPresets.swift; sourceTree = "<group>"; };
 		B0FFFFFE261F000100000001 /* EnergyShapeDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EnergyShapeDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1000000261F000100000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B1000002261F000100000002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B1000004261F000100000003 /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
-		B1000006261F000100000004 /* AppleLogoPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLogoPath.swift; sourceTree = "<group>"; };
 		B1000008261F000100000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B100000C261F000100000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -31,6 +32,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A40079B42F20F3F300CCD50D /* EnergyShape in Frameworks */,
+				A40079B72F20F4BB00CCD50D /* LookinServer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,7 +77,7 @@
 				B1000000261F000100000001 /* AppDelegate.swift */,
 				B1000002261F000100000002 /* SceneDelegate.swift */,
 				B1000004261F000100000003 /* DemoViewController.swift */,
-				B1000006261F000100000004 /* AppleLogoPath.swift */,
+				A4007A012F21187D00CCD50D /* ColorPresets.swift */,
 				B1000008261F000100000005 /* Assets.xcassets */,
 				B100000C261F000100000006 /* Info.plist */,
 			);
@@ -100,6 +102,7 @@
 			name = EnergyShapeDemo;
 			packageProductDependencies = (
 				A40079B32F20F3F300CCD50D /* EnergyShape */,
+				A40079B62F20F4BB00CCD50D /* LookinServer */,
 			);
 			productName = EnergyShapeDemo;
 			productReference = B0FFFFFE261F000100000001 /* EnergyShapeDemo.app */;
@@ -131,6 +134,7 @@
 			mainGroup = B0FFFFF5261F000100000001;
 			packageReferences = (
 				A40079AF2F20EEE000CCD50D /* XCLocalSwiftPackageReference "../../EnergyShape" */,
+				A40079B52F20F4BB00CCD50D /* XCRemoteSwiftPackageReference "LookinServer" */,
 			);
 			productRefGroup = B0FFFFFA261F000100000001 /* Products */;
 			projectDirPath = "";
@@ -159,8 +163,8 @@
 			files = (
 				B1000001261F000100000001 /* AppDelegate.swift in Sources */,
 				B1000003261F000100000002 /* SceneDelegate.swift in Sources */,
+				A4007A022F21187D00CCD50D /* ColorPresets.swift in Sources */,
 				B1000005261F000100000003 /* DemoViewController.swift in Sources */,
-				B1000007261F000100000004 /* AppleLogoPath.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,11 +376,27 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		A40079B52F20F4BB00CCD50D /* XCRemoteSwiftPackageReference "LookinServer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/QMUI/LookinServer";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.8;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		A40079B32F20F3F300CCD50D /* EnergyShape */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A40079AF2F20EEE000CCD50D /* XCLocalSwiftPackageReference "../../EnergyShape" */;
 			productName = EnergyShape;
+		};
+		A40079B62F20F4BB00CCD50D /* LookinServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A40079B52F20F4BB00CCD50D /* XCRemoteSwiftPackageReference "LookinServer" */;
+			productName = LookinServer;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
