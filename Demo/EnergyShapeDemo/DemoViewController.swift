@@ -108,8 +108,9 @@ public class DemoViewController: UIViewController {
         // 创建新视图
         createEnergyView()
         
-        // 添加到视图层级（最上层）
-        view.addSubview(energyView)
+        // 添加到视图层级（在 statsView 下方，在 controlPanel 上方）
+        view.insertSubview(energyView, belowSubview: statsView)
+        energyView.isUserInteractionEnabled = false
         
         // 设置约束
         NSLayoutConstraint.activate([
@@ -150,13 +151,14 @@ public class DemoViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .black
 
-        // 添加能量视图（最底层）
-        view.addSubview(energyView)
-
-        // 添加控制面板（中间层）
+        // 添加控制面板（最底层）
         view.addSubview(controlPanel)
 
-        // 添加性能统计视图（最上层，不被面板遮挡）
+        // 添加能量视图（中间层，禁用交互以穿透到下层）
+        view.addSubview(energyView)
+        energyView.isUserInteractionEnabled = false
+
+        // 添加性能统计视图（最上层）
         view.addSubview(statsView)
 
         // 设置约束
