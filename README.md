@@ -14,7 +14,12 @@ Apple Intelligence 风格的边缘发光动画组件 - 在任意形状边缘渲�
   <img src="screenshots/2.png" width="180" />
   <img src="screenshots/3.png" width="180" />
   <img src="screenshots/4.png" width="180" />
+</p>
+<p align="center">
   <img src="screenshots/5.png" width="180" />
+  <img src="screenshots/6.png" width="180" />
+  <img src="screenshots/7.png" width="180" />
+  <img src="screenshots/8.png" width="180" />
 </p>
 
 ## ✨ 特性
