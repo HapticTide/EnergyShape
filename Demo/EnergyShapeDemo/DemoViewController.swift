@@ -162,11 +162,15 @@ public class DemoViewController: UIViewController {
         // energyContainer 禁用交互，所以 controlPanel 可以接收触摸
 
         // 添加能量视图容器（最底层，全屏，禁用交互）
+        // 层级顺序（从底到顶）：controlPanel → energyContainer → statsView
+        // energyContainer 禁用交互，触摸事件穿透到下层 controlPanel
+
+        // 添加控制面板（最底层）
+        view.addSubview(controlPanel)
+
+        // 添加能量视图容器（中间层，全屏，禁用交互以穿透）
         view.addSubview(energyContainer)
         energyContainer.addSubview(energyView)
-
-        // 添加控制面板（中间层）
-        view.addSubview(controlPanel)
 
         // 添加性能统计视图（最上层）
         view.addSubview(statsView)

@@ -7,6 +7,16 @@ Apple Intelligence 风格的边缘发光动画组件 - 在任意形状边缘渲�
 ![Metal](https://img.shields.io/badge/Metal-Supported-green.svg)
 ![License MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
+## 📸 效果预览
+
+<p align="center">
+  <img src="screenshots/1.png" width="180" />
+  <img src="screenshots/2.png" width="180" />
+  <img src="screenshots/3.png" width="180" />
+  <img src="screenshots/4.png" width="180" />
+  <img src="screenshots/5.png" width="180" />
+</p>
+
 ## ✨ 特性
 
 - 🎨 **任意形状支持** - 圆角矩形、圆形、椭圆、胶囊型，或任意 CGPath
@@ -24,7 +34,7 @@ Apple Intelligence 风格的边缘发光动画组件 - 在任意形状边缘渲�
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/your-repo/EnergyShape.git", from: "1.0.0")
+    .package(url: "https://github.com/HapticTide/EnergyShape.git", from: "1.0.0")
 ]
 ```
 
