@@ -15,15 +15,15 @@ import UIKit
 enum ShapeType: Int, CaseIterable {
     case roundedRect = 0
     case circle = 1
-    case ellipse = 2
-    case capsule = 3
+    case appleLogo = 2
+    case swiftLogo = 3
 
     var displayName: String {
         switch self {
         case .roundedRect: "圆角矩形"
         case .circle: "圆形"
-        case .ellipse: "椭圆"
-        case .capsule: "胶囊型"
+        case .appleLogo: "Apple"
+        case .swiftLogo: "Swift"
         }
     }
 }
@@ -68,12 +68,8 @@ public class DemoViewController: UIViewController {
     /// 当前颜色预设
     private var currentColorPreset: ColorPreset = .appleIntelligence
     
-    /// 当前形状参数（圆角半径/半径/纵轴半径，根据形状类型不同含义不同）
+    /// 当前形状参数（圆角半径/半径，根据形状类型不同含义不同）
     private var currentShapeParam: CGFloat = 0.15
-    
-    /// 当前横向边距（仅用于椭圆和胶囊）
-    /// 归一化值，表示形状边缘到视图边缘的距离
-    private var currentHorizontalMargin: CGFloat = 0.1
 
     /// 面板底部约束（用于展开/收起动画）
     private var panelBottomConstraint: NSLayoutConstraint?
@@ -215,10 +211,6 @@ public class DemoViewController: UIViewController {
         // 使用当前形状参数
         let param = currentShapeParam
         
-        // 设置一个简单的占位路径（仅用于触发 updateMaskForCurrentBounds）
-        // 实际渲染使用 analyticShapeOverride
-        let placeholderPath = UIBezierPath(rect: view.bounds).cgPath
-        
         switch type {
         case .roundedRect:
             // 圆角矩形：填充整个视图，param 控制圆角半径
@@ -226,6 +218,8 @@ public class DemoViewController: UIViewController {
                 rect: .zero,  // 会被自动调整到 bounds
                 cornerRadius: param
             )
+            // 设置一个占位路径
+            energyView.shapePath = UIBezierPath(rect: view.bounds).cgPath
             
         case .circle:
             // 圆形：居中显示，param 控制半径
@@ -233,37 +227,21 @@ public class DemoViewController: UIViewController {
                 center: CGPoint(x: 0.5, y: 0.5),
                 radius: param
             )
+            // 设置一个占位路径
+            energyView.shapePath = UIBezierPath(rect: view.bounds).cgPath
             
-        case .ellipse:
-            // 椭圆：param 控制纵轴半径（垂直方向）
-            // 横轴由外边距控制：horizontalRadius = 0.5 - horizontalMargin
-            let horizontalRadius = 0.5 - currentHorizontalMargin
-            let verticalRadius = param  // 垂直方向半径由参数控制
-            let ellipseRect = CGRect(
-                x: currentHorizontalMargin,
-                y: 0.5 - verticalRadius,
-                width: horizontalRadius * 2,
-                height: verticalRadius * 2
-            )
-            energyView.analyticShapeOverride = .ellipse(rect: ellipseRect)
+        case .appleLogo:
+            // Apple Logo：使用自定义贝塞尔路径
+            energyView.analyticShapeOverride = nil  // 清除解析形状，使用 GPU JFA
+            let logoPath = createAppleLogoPath(size: view.bounds.size)
+            energyView.shapePath = logoPath
             
-        case .capsule:
-            // 胶囊型：param 控制纵轴半径（垂直方向，即短边）
-            // 横轴由外边距控制：horizontalRadius = 0.5 - horizontalMargin
-            let horizontalRadius = 0.5 - currentHorizontalMargin
-            let verticalRadius = param  // 垂直方向半径由参数控制
-            let capsuleRect = CGRect(
-                x: currentHorizontalMargin,
-                y: 0.5 - verticalRadius,
-                width: horizontalRadius * 2,
-                height: verticalRadius * 2
-            )
-            // isVertical = false 表示横向是长边（水平胶囊）
-            energyView.analyticShapeOverride = .capsule(rect: capsuleRect, isVertical: false)
+        case .swiftLogo:
+            // Swift Logo：使用自定义贝塞尔路径
+            energyView.analyticShapeOverride = nil  // 清除解析形状，使用 GPU JFA
+            let logoPath = createSwiftLogoPath(size: view.bounds.size)
+            energyView.shapePath = logoPath
         }
-        
-        // 设置路径触发更新
-        energyView.shapePath = placeholderPath
     }
 }
 
@@ -279,10 +257,8 @@ extension DemoViewController: ControlPanelDelegate {
             currentShapeParam = 0.15  // 圆角半径
         case .circle:
             currentShapeParam = 0.5   // 半径（占满）
-        case .ellipse:
-            currentShapeParam = 0.30  // 纵轴半径
-        case .capsule:
-            currentShapeParam = 0.12  // 纵轴半径
+        case .appleLogo, .swiftLogo:
+            currentShapeParam = 1.0   // Logo 无参数控制
         }
         
         // 更新形状参数标签和滑块值
@@ -307,13 +283,13 @@ extension DemoViewController: ControlPanelDelegate {
         energyView.config = currentConfig
     }
 
-    func panelDidChangeBorderWidth(_ panel: ControlPanel, value: Float) {
-        currentConfig.borderWidth = value
+    func panelDidChangeGlowFalloff(_ panel: ControlPanel, value: Float) {
+        currentConfig.glowFalloff = value
         energyView.config = currentConfig
     }
     
-    func panelDidChangeBorderThickness(_ panel: ControlPanel, value: Float) {
-        currentConfig.borderThickness = value
+    func panelDidChangeBorderBandWidth(_ panel: ControlPanel, value: Float) {
+        currentConfig.borderBandWidth = value
         energyView.config = currentConfig
     }
     
@@ -327,8 +303,8 @@ extension DemoViewController: ControlPanelDelegate {
         energyView.config = currentConfig
     }
 
-    func panelDidChangeInnerGlowRange(_ panel: ControlPanel, value: Float) {
-        currentConfig.innerGlowRange = value
+    func panelDidChangeInnerGlowRadius(_ panel: ControlPanel, value: Float) {
+        currentConfig.innerGlowRadius = value
         energyView.config = currentConfig
     }
     
@@ -336,11 +312,11 @@ extension DemoViewController: ControlPanelDelegate {
         if enabled {
             // 启用外发光：设置默认值
             currentConfig.outerGlowIntensity = 0.3
-            currentConfig.outerGlowRange = 0.1
+            currentConfig.outerGlowRadius = 0.1
         } else {
             // 禁用外发光
             currentConfig.outerGlowIntensity = 0.0
-            currentConfig.outerGlowRange = 0.0
+            currentConfig.outerGlowRadius = 0.0
         }
         energyView.config = currentConfig
     }
@@ -350,8 +326,8 @@ extension DemoViewController: ControlPanelDelegate {
         energyView.config = currentConfig
     }
     
-    func panelDidChangeOuterGlowRange(_ panel: ControlPanel, value: Float) {
-        currentConfig.outerGlowRange = value
+    func panelDidChangeOuterGlowRadius(_ panel: ControlPanel, value: Float) {
+        currentConfig.outerGlowRadius = value
         energyView.config = currentConfig
     }
     
@@ -372,11 +348,37 @@ extension DemoViewController: ControlPanelDelegate {
             let inset = CGFloat(value)
             energyView.contentInset = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
             
-        case .ellipse, .capsule:
-            // 椭圆和胶囊：外边距控制横向边距（归一化值）
-            // 将像素值转换为归一化值（假设 60 像素对应 0.1 的归一化边距）
-            currentHorizontalMargin = CGFloat(value) / 600.0
-            updateShape(for: shapeType)
+        case .appleLogo:
+            // Apple Logo：外边距控制整体边距
+            let inset = CGFloat(value)
+            energyView.contentInset = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
+            // 重新生成路径以适应新边距
+            let containerSize = CGSize(
+                width: view.bounds.width - inset * 2,
+                height: view.bounds.height - inset * 2
+            )
+            let appleLogoPath = createAppleLogoPath(size: containerSize)
+            // 创建一个偏移后的路径
+            var appleTransform = CGAffineTransform(translationX: inset, y: inset)
+            if let transformedPath = appleLogoPath.copy(using: &appleTransform) {
+                energyView.shapePath = transformedPath
+            }
+            
+        case .swiftLogo:
+            // Swift Logo：外边距控制整体边距
+            let inset = CGFloat(value)
+            energyView.contentInset = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
+            // 重新生成路径以适应新边距
+            let containerSize = CGSize(
+                width: view.bounds.width - inset * 2,
+                height: view.bounds.height - inset * 2
+            )
+            let swiftLogoPath = createSwiftLogoPath(size: containerSize)
+            // 创建一个偏移后的路径
+            var swiftTransform = CGAffineTransform(translationX: inset, y: inset)
+            if let transformedPath = swiftLogoPath.copy(using: &swiftTransform) {
+                energyView.shapePath = transformedPath
+            }
         }
     }
 
@@ -420,12 +422,12 @@ extension DemoViewController: ControlPanelDelegate {
         case 1: // circle
             currentShapeParam = 0.5
             controlPanel.updateShapeParamValue(0.5)
-        case 2: // ellipse
-            currentShapeParam = 0.30
-            controlPanel.updateShapeParamValue(0.30)
-        case 3: // capsule
-            currentShapeParam = 0.12
-            controlPanel.updateShapeParamValue(0.12)
+        case 2: // appleLogo
+            currentShapeParam = 1.0
+            controlPanel.updateShapeParamValue(1.0)
+        case 3: // swiftLogo
+            currentShapeParam = 1.0
+            controlPanel.updateShapeParamValue(1.0)
         default:
             break
         }
@@ -498,16 +500,16 @@ protocol ControlPanelDelegate: AnyObject {
     func panelDidToggleBloom(_ panel: ControlPanel, enabled: Bool)
     func panelDidChangeBloomIntensity(_ panel: ControlPanel, value: Float)
     // 边框发光参数
-    func panelDidChangeBorderWidth(_ panel: ControlPanel, value: Float)
-    func panelDidChangeBorderThickness(_ panel: ControlPanel, value: Float)
+    func panelDidChangeGlowFalloff(_ panel: ControlPanel, value: Float)
+    func panelDidChangeBorderBandWidth(_ panel: ControlPanel, value: Float)
     func panelDidChangeBorderSoftness(_ panel: ControlPanel, value: Float)
     func panelDidChangeInnerGlow(_ panel: ControlPanel, value: Float)
-    func panelDidChangeInnerGlowRange(_ panel: ControlPanel, value: Float)
+    func panelDidChangeInnerGlowRadius(_ panel: ControlPanel, value: Float)
     func panelDidChangeContentInset(_ panel: ControlPanel, value: Float)
     // 外发光参数
     func panelDidToggleOuterGlow(_ panel: ControlPanel, enabled: Bool)
     func panelDidChangeOuterGlowIntensity(_ panel: ControlPanel, value: Float)
-    func panelDidChangeOuterGlowRange(_ panel: ControlPanel, value: Float)
+    func panelDidChangeOuterGlowRadius(_ panel: ControlPanel, value: Float)
     // 形状参数（边距/半径）
     func panelDidChangeShapeParam(_ panel: ControlPanel, value: Float)
     // 颜色预设
@@ -922,20 +924,18 @@ class ControlPanel: UIView {
             shapeParamTitleLabel?.text = "圆角半径"
             shapeParamSlider.minimumValue = 0
             shapeParamSlider.maximumValue = 0.5
+            shapeParamSlider.isEnabled = true
         case .circle:
             shapeParamTitleLabel?.text = "半径"
             shapeParamSlider.minimumValue = 0.1
             shapeParamSlider.maximumValue = 0.5
-        case .ellipse:
-            // 椭圆：控制纵轴（垂直方向）半径
-            shapeParamTitleLabel?.text = "纵轴半径"
-            shapeParamSlider.minimumValue = 0.1
-            shapeParamSlider.maximumValue = 0.5
-        case .capsule:
-            // 胶囊：控制纵轴（垂直方向，即短边）半径
-            shapeParamTitleLabel?.text = "纵轴半径"
-            shapeParamSlider.minimumValue = 0.05
-            shapeParamSlider.maximumValue = 0.3
+            shapeParamSlider.isEnabled = true
+        case .appleLogo, .swiftLogo:
+            // Logo 形状：无参数控制
+            shapeParamTitleLabel?.text = "（无参数）"
+            shapeParamSlider.minimumValue = 0
+            shapeParamSlider.maximumValue = 1
+            shapeParamSlider.isEnabled = false
         }
         updateValueLabel(for: shapeParamSlider)
     }
@@ -985,18 +985,18 @@ class ControlPanel: UIView {
         bloomIntensitySlider.isEnabled = config.bloomEnabled
 
         // 边框发光参数
-        borderWidthSlider.value = config.borderWidth
-        borderThicknessSlider.value = config.borderThickness
+        borderWidthSlider.value = config.glowFalloff
+        borderThicknessSlider.value = config.borderBandWidth
         borderSoftnessSlider.value = config.borderSoftness
         innerGlowSlider.value = config.innerGlowIntensity
-        innerGlowRangeSlider.value = config.innerGlowRange
+        innerGlowRangeSlider.value = config.innerGlowRadius
         
         // 外发光参数
         let hasOuterGlow = config.outerGlowIntensity > 0
         outerGlowSwitch.isOn = hasOuterGlow
         outerGlowSlider.value = config.outerGlowIntensity
         outerGlowSlider.isEnabled = hasOuterGlow
-        outerGlowRangeSlider.value = config.outerGlowRange
+        outerGlowRangeSlider.value = config.outerGlowRadius
         outerGlowRangeSlider.isEnabled = hasOuterGlow
 
         updateValueLabel(for: speedSlider)
@@ -1054,12 +1054,12 @@ class ControlPanel: UIView {
 
     @objc private func borderWidthChanged(_ sender: UISlider) {
         updateValueLabel(for: sender)
-        delegate?.panelDidChangeBorderWidth(self, value: sender.value)
+        delegate?.panelDidChangeGlowFalloff(self, value: sender.value)
     }
     
     @objc private func borderThicknessChanged(_ sender: UISlider) {
         updateValueLabel(for: sender)
-        delegate?.panelDidChangeBorderThickness(self, value: sender.value)
+        delegate?.panelDidChangeBorderBandWidth(self, value: sender.value)
     }
     
     @objc private func borderSoftnessChanged(_ sender: UISlider) {
@@ -1074,7 +1074,7 @@ class ControlPanel: UIView {
 
     @objc private func innerGlowRangeChanged(_ sender: UISlider) {
         updateValueLabel(for: sender)
-        delegate?.panelDidChangeInnerGlowRange(self, value: sender.value)
+        delegate?.panelDidChangeInnerGlowRadius(self, value: sender.value)
     }
     
     @objc private func outerGlowToggled(_ sender: UISwitch) {
@@ -1090,7 +1090,7 @@ class ControlPanel: UIView {
     
     @objc private func outerGlowRangeChanged(_ sender: UISlider) {
         updateValueLabel(for: sender)
-        delegate?.panelDidChangeOuterGlowRange(self, value: sender.value)
+        delegate?.panelDidChangeOuterGlowRadius(self, value: sender.value)
     }
     
     @objc private func shapeParamChanged(_ sender: UISlider) {
@@ -1286,5 +1286,199 @@ final class PerformanceStatsView: UIView {
         default:
             return UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 1.0)  // 红色
         }
+    }
+}
+
+// MARK: - Apple Logo 路径生成
+
+extension DemoViewController {
+    /// 创建 Apple Logo 路径
+    /// 基于 Apple-Logo-Canvas-SwiftUI 项目的归一化坐标
+    func createAppleLogoPath(size: CGSize) -> CGPath {
+        let path = UIBezierPath()
+        
+        // 计算居中适配的尺寸（留 15% 边距）
+        let margin: CGFloat = 0.15
+        let availableWidth = size.width * (1 - 2 * margin)
+        let availableHeight = size.height * (1 - 2 * margin)
+        let logoSize = min(availableWidth, availableHeight)
+        let offsetX = (size.width - logoSize) / 2
+        let offsetY = (size.height - logoSize) / 2
+        
+        // 坐标转换：归一化坐标 -> 实际像素坐标
+        func p(_ xRatio: CGFloat, _ yRatio: CGFloat) -> CGPoint {
+            CGPoint(x: xRatio * logoSize + offsetX, y: yRatio * logoSize + offsetY)
+        }
+        
+        // 苹果主体
+        path.move(to: p(0.67362, 0.2673))
+        path.addCurve(
+            to: p(0.51433, 0.30488),
+            controlPoint1: p(0.59845, 0.2673),
+            controlPoint2: p(0.56668, 0.30488)
+        )
+        path.addCurve(
+            to: p(0.35457, 0.26758),
+            controlPoint1: p(0.46065, 0.30488),
+            controlPoint2: p(0.41971, 0.26758)
+        )
+        path.addCurve(
+            to: p(0.17964, 0.37783),
+            controlPoint1: p(0.29081, 0.26758),
+            controlPoint2: p(0.22282, 0.30836)
+        )
+        path.addCurve(
+            to: p(0.2275, 0.8175),
+            controlPoint1: p(0.11901, 0.4758),
+            controlPoint2: p(0.1293, 0.66031)
+        )
+        path.addCurve(
+            to: p(0.37105, 0.93756),
+            controlPoint1: p(0.26262, 0.87377),
+            controlPoint2: p(0.30953, 0.93688)
+        )
+        path.addLine(to: p(0.37217, 0.93756))
+        path.addCurve(
+            to: p(0.51511, 0.90045),
+            controlPoint1: p(0.42564, 0.93756),
+            controlPoint2: p(0.44153, 0.90088)
+        )
+        path.addLine(to: p(0.51623, 0.90045))
+        path.addCurve(
+            to: p(0.6565, 0.93734),
+            controlPoint1: p(0.58871, 0.90045),
+            controlPoint2: p(0.60326, 0.93734)
+        )
+        path.addLine(to: p(0.65762, 0.93734))
+        path.addCurve(
+            to: p(0.80369, 0.81069),
+            controlPoint1: p(0.71915, 0.93666),
+            controlPoint2: p(0.76857, 0.86674)
+        )
+        path.addCurve(
+            to: p(0.85776, 0.70453),
+            controlPoint1: p(0.82897, 0.77037),
+            controlPoint2: p(0.83837, 0.75014)
+        )
+        path.addCurve(
+            to: p(0.83337, 0.35621),
+            controlPoint1: p(0.71571, 0.64805),
+            controlPoint2: p(0.6929, 0.43709)
+        )
+        path.addCurve(
+            to: p(0.67343, 0.26738),
+            controlPoint1: p(0.7905, 0.29996),
+            controlPoint2: p(0.73024, 0.26738)
+        )
+        path.addLine(to: p(0.67362, 0.2673))
+        path.close()
+        
+        // 叶子部分
+        path.move(to: p(0.65708, 0.0625))
+        path.addCurve(
+            to: p(0.52956, 0.13449),
+            controlPoint1: p(0.61234, 0.06568),
+            controlPoint2: p(0.56013, 0.09553)
+        )
+        path.addCurve(
+            to: p(0.48795, 0.27299),
+            controlPoint1: p(0.50182, 0.1698),
+            controlPoint2: p(0.479, 0.22219)
+        )
+        path.addLine(to: p(0.49153, 0.27299))
+        path.addCurve(
+            to: p(0.61644, 0.20441),
+            controlPoint1: p(0.53918, 0.27299),
+            controlPoint2: p(0.58795, 0.24293)
+        )
+        path.addCurve(
+            to: p(0.65708, 0.0625),
+            controlPoint1: p(0.64388, 0.16775),
+            controlPoint2: p(0.66469, 0.1158)
+        )
+        path.close()
+        
+        return path.cgPath
+    }
+    
+    /// 创建 Swift Logo 路径
+    /// 基于 SwiftLogo 项目的归一化坐标
+    func createSwiftLogoPath(size: CGSize) -> CGPath {
+        let path = UIBezierPath()
+        
+        // 计算居中适配的尺寸（留 15% 边距）
+        let margin: CGFloat = 0.15
+        let availableWidth = size.width * (1 - 2 * margin)
+        let availableHeight = size.height * (1 - 2 * margin)
+        let logoSize = min(availableWidth, availableHeight)
+        let offsetX = (size.width - logoSize) / 2
+        let offsetY = (size.height - logoSize) / 2
+        
+        // 坐标转换：归一化坐标 -> 实际像素坐标
+        func p(_ xRatio: CGFloat, _ yRatio: CGFloat) -> CGPoint {
+            CGPoint(x: xRatio * logoSize + offsetX, y: yRatio * logoSize + offsetY)
+        }
+        
+        // Swift 标志的鸟形曲线
+        path.move(to: p(0, 0.63))
+        
+        // 底部主曲线（使用 cubic curve）
+        path.addCurve(
+            to: p(0.98, 0.93),
+            controlPoint1: p(0.3, 1.2),
+            controlPoint2: p(0.85, 0.7)
+        )
+        
+        // 右侧边缘
+        path.addQuadCurve(
+            to: p(0.9, 0.68),
+            controlPoint: p(1.0, 0.8)
+        )
+        
+        // 右上角
+        path.addQuadCurve(
+            to: p(0.61, 0),
+            controlPoint: p(1.0, 0.3)
+        )
+        
+        // 第一个羽毛
+        path.addQuadCurve(
+            to: p(0.7, 0.53),
+            controlPoint: p(0.78, 0.3)
+        )
+        
+        // 第二个羽毛
+        path.addQuadCurve(
+            to: p(0.22, 0.09),
+            controlPoint: p(0.35, 0.25)
+        )
+        
+        // 第三个羽毛
+        path.addQuadCurve(
+            to: p(0.5, 0.48),
+            controlPoint: p(0.3, 0.25)
+        )
+        
+        // 第四个羽毛
+        path.addQuadCurve(
+            to: p(0.1, 0.15),
+            controlPoint: p(0.35, 0.4)
+        )
+        
+        // 回到中间
+        path.addQuadCurve(
+            to: p(0.56, 0.71),
+            controlPoint: p(0.33, 0.51)
+        )
+        
+        // 回到起点
+        path.addQuadCurve(
+            to: p(0, 0.63),
+            controlPoint: p(0.3, 0.85)
+        )
+        
+        path.close()
+        
+        return path.cgPath
     }
 }

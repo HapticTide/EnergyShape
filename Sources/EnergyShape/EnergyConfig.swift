@@ -21,9 +21,9 @@ public struct EnergyConfig {
     /// 控制能量流动的随机扰动程度
     public var noiseStrength: Float = 0.3
 
-    /// 相位缩放 [0.5 ~ 5.0]，默认 2.0
-    /// 影响流动条纹的密度
-    public var phaseScale: Float = 2.0
+    /// 噪声缩放 [0.5 ~ 5.0]，默认 2.0
+    /// 影响流动图案的密度和细节
+    public var noiseScale: Float = 2.0
 
     /// 噪声 octaves 数量 [2 ~ 4]，默认 3
     /// 更多层次 = 更丰富细节，但性能开销更大
@@ -39,15 +39,15 @@ public struct EnergyConfig {
 
     // MARK: - 边框发光参数
 
-    /// 边框宽度 [0.005 ~ 0.1]，默认 0.008（相对于视图尺寸的比例）
+    /// 发光衰减距离 [0.005 ~ 0.1]，默认 0.008（相对于视图尺寸的比例）
     /// 控制边框发光的衰减速度，值越大光晕越宽越柔和
-    public var borderWidth: Float = 0.008
+    public var glowFalloff: Float = 0.008
     
-    /// 边框厚度 [0 ~ 0.1]，默认 0.0（相对于视图尺寸的比例）
+    /// 边框带宽度 [0 ~ 0.1]，默认 0.0（相对于视图尺寸的比例）
     /// 定义边框带的像素宽度，在此范围内保持高亮，然后再衰减
     /// - 值为 0 时退化为纯发光衰减模式（原有行为）
     /// - 值 > 0 时产生清晰可见的边框带
-    public var borderThickness: Float = 0.0
+    public var borderBandWidth: Float = 0.0
     
     /// 边框柔和度 [0 ~ 1.0]，默认 0.5
     /// 控制边框带内的亮度分布：
@@ -59,16 +59,16 @@ public struct EnergyConfig {
     /// 控制边框向形状内部的发光扩散强度
     public var innerGlowIntensity: Float = 0.35
 
-    /// 内发光范围 [0.01 ~ 0.5]，默认 0.04（相对于视图尺寸的比例）
+    /// 内发光半径 [0.01 ~ 0.5]，默认 0.04（相对于视图尺寸的比例）
     /// 值越大内发光扩散越远，全屏场景建议使用较小值（10~20px 范围）
-    public var innerGlowRange: Float = 0.04
+    public var innerGlowRadius: Float = 0.04
 
     /// 外发光强度 [0 ~ 1.0]，默认 0.0
     /// 控制边框向形状外部的发光扩散强度（全屏贴边效果建议关闭）
     public var outerGlowIntensity: Float = 0.0
 
-    /// 外发光范围 [0.01 ~ 0.3]，默认 0.0（相对于视图尺寸的比例）
-    public var outerGlowRange: Float = 0.0
+    /// 外发光半径 [0.01 ~ 0.3]，默认 0.0（相对于视图尺寸的比例）
+    public var outerGlowRadius: Float = 0.0
 
     /// 颜色流动速度 [0.05 ~ 1.0]，默认 0.2
     /// 颜色沿边框流动的速度
@@ -147,7 +147,7 @@ public struct EnergyConfig {
     public var sdfQuality: SDFQuality = .medium
 
     /// Bloom 纹理分辨率比例 [0.25, 0.5]，默认 0.25
-    public var bloomResolutionScale: Float = 0.25
+    public var bloomScale: Float = 0.25
 
     // MARK: - 背景模式
 
@@ -169,19 +169,19 @@ public struct EnergyConfig {
     public mutating func validate() {
         speed = max(0.1, min(3.0, speed))
         noiseStrength = max(0.0, min(1.0, noiseStrength))
-        phaseScale = max(0.5, min(5.0, phaseScale))
+        noiseScale = max(0.5, min(5.0, noiseScale))
         noiseOctaves = max(2, min(4, noiseOctaves))
         glowIntensity = max(0.0, min(2.0, glowIntensity))
         edgeBoost = max(0.0, min(3.0, edgeBoost))
 
         // 边框发光参数验证
-        borderWidth = max(0.005, min(0.1, borderWidth))
-        borderThickness = max(0.0, min(0.1, borderThickness))
+        glowFalloff = max(0.005, min(0.1, glowFalloff))
+        borderBandWidth = max(0.0, min(0.1, borderBandWidth))
         borderSoftness = max(0.0, min(1.0, borderSoftness))
         innerGlowIntensity = max(0.0, min(1.0, innerGlowIntensity))
-        innerGlowRange = max(0.01, min(0.5, innerGlowRange))
+        innerGlowRadius = max(0.01, min(0.5, innerGlowRadius))
         outerGlowIntensity = max(0.0, min(1.0, outerGlowIntensity))
-        outerGlowRange = max(0.01, min(0.1, outerGlowRange))  // 缩小范围上限
+        outerGlowRadius = max(0.01, min(0.1, outerGlowRadius))
         colorFlowSpeed = max(0.05, min(1.0, colorFlowSpeed))
         
         // IDW 弥散参数验证
@@ -194,7 +194,7 @@ public struct EnergyConfig {
         bloomThreshold = max(0.0, min(1.0, bloomThreshold))
         bloomBlurRadius = [3, 5, 7, 9].min(by: { abs($0 - bloomBlurRadius) < abs($1 - bloomBlurRadius) }) ?? 5
         maxTextureSize = max(256, min(4096, maxTextureSize))
-        bloomResolutionScale = max(0.25, min(0.5, bloomResolutionScale))
+        bloomScale = max(0.25, min(0.5, bloomScale))
     }
 }
 

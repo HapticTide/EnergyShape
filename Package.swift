@@ -27,10 +27,6 @@ let package = Package(
             path: "Sources/EnergyShape",
             exclude: [],
             sources: nil,
-            resources: [
-                // 包含 Metal shader 源文件，运行时编译
-                .process("Shaders.metal"),
-            ],
             swiftSettings: [
                 .define("DEBUG", .when(configuration: .debug)),
             ]

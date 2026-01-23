@@ -32,7 +32,7 @@ struct EnergyUniforms {
     var time: Float
     var speed: Float
     var noiseStrength: Float
-    var phaseScale: Float
+    var noiseScale: Float
     var glowIntensity: Float
     var edgeBoost: Float
     var intensity: Float
@@ -57,13 +57,13 @@ struct EnergyUniforms {
     var color5Pos: Float = 0
 
     // 边框发光参数（像素单位）
-    var borderWidth: Float = 2.0
-    var borderThickness: Float = 0.0
+    var glowFalloff: Float = 2.0
+    var borderBandWidth: Float = 0.0
     var borderSoftness: Float = 0.5
     var innerGlowIntensity: Float = 0.3
-    var innerGlowRange: Float = 15.0
+    var innerGlowRadius: Float = 15.0
     var outerGlowIntensity: Float = 0.2
-    var outerGlowRange: Float = 8.0
+    var outerGlowRadius: Float = 8.0
     var colorFlowSpeed: Float = 0.2
     
     // SDF 距离参数
@@ -198,41 +198,9 @@ final class EnergyMetalRenderer: NSObject {
     // MARK: - Pipeline 设置
 
     private func setupPipelines() throws {
-        // 1. 尝试从默认库加载（App 直接包含源码时）
-        if let library = device.makeDefaultLibrary() {
-            try setupPipelinesWithLibrary(library)
-            return
-        }
-
-        // 2. 尝试从 SwiftPM Bundle.module 加载编译后的 metallib
-        #if SWIFT_PACKAGE
-            if
-                let libraryURL = Bundle.module.url(forResource: "default", withExtension: "metallib"),
-                let library = try? device.makeLibrary(URL: libraryURL) {
-                try setupPipelinesWithLibrary(library)
-                return
-            }
-
-            // 3. 从 Bundle.module 加载 .metal 源码并在运行时编译
-            if
-                let shaderURL = Bundle.module.url(forResource: "Shaders", withExtension: "metal"),
-                let shaderSource = try? String(contentsOf: shaderURL, encoding: .utf8) {
-                let library = try device.makeLibrary(source: shaderSource, options: nil)
-                try setupPipelinesWithLibrary(library)
-                return
-            }
-        #endif
-
-        // 4. 尝试从当前类所在的 Bundle 加载
-        let classBundle = Bundle(for: EnergyMetalRenderer.self)
-        if
-            let libraryURL = classBundle.url(forResource: "default", withExtension: "metallib"),
-            let library = try? device.makeLibrary(URL: libraryURL) {
-            try setupPipelinesWithLibrary(library)
-            return
-        }
-
-        throw EnergyShapeError.shaderCompilationFailed("无法加载 Metal Library，请确保 Shaders.metal 文件在正确位置")
+        // 从嵌入式字符串加载 Shader 源码（无需依赖 .metal 文件）
+        let library = try ShaderSource.makeLibrary(device: device)
+        try setupPipelinesWithLibrary(library)
     }
 
     private func setupPipelinesWithLibrary(_ library: MTLLibrary) throws {
@@ -536,8 +504,8 @@ final class EnergyMetalRenderer: NSObject {
     private var lastEnergySize: (width: Int, height: Int) = (0, 0)
 
     private func ensureBloomTextures(width: Int, height: Int) {
-        let bloomWidth = max(1, Int(Float(width) * config.bloomResolutionScale))
-        let bloomHeight = max(1, Int(Float(height) * config.bloomResolutionScale))
+        let bloomWidth = max(1, Int(Float(width) * config.bloomScale))
+        let bloomHeight = max(1, Int(Float(height) * config.bloomScale))
 
         // 检查是否需要重建 Bloom 纹理
         if lastBloomSize.width != bloomWidth || lastBloomSize.height != bloomHeight {
@@ -875,7 +843,7 @@ extension EnergyMetalRenderer: MTKViewDelegate {
             time: totalTime,
             speed: animationParams.speed,
             noiseStrength: animationParams.noiseStrength,
-            phaseScale: config.phaseScale,
+            noiseScale: config.noiseScale,
             glowIntensity: config.glowIntensity,
             edgeBoost: config.edgeBoost,
             intensity: animationParams.intensity,
@@ -886,13 +854,13 @@ extension EnergyMetalRenderer: MTKViewDelegate {
         )
 
         // 设置边框发光参数（转换为像素单位）
-        energyUniforms.borderWidth = config.borderWidth * minDimension
-        energyUniforms.borderThickness = config.borderThickness * minDimension
+        energyUniforms.glowFalloff = config.glowFalloff * minDimension
+        energyUniforms.borderBandWidth = config.borderBandWidth * minDimension
         energyUniforms.borderSoftness = config.borderSoftness
         energyUniforms.innerGlowIntensity = config.innerGlowIntensity
-        energyUniforms.innerGlowRange = config.innerGlowRange * minDimension
+        energyUniforms.innerGlowRadius = config.innerGlowRadius * minDimension
         energyUniforms.outerGlowIntensity = config.outerGlowIntensity
-        energyUniforms.outerGlowRange = config.outerGlowRange * minDimension
+        energyUniforms.outerGlowRadius = config.outerGlowRadius * minDimension
         energyUniforms.colorFlowSpeed = config.colorFlowSpeed
         
         // SDF 最大距离（与 EnergyMaskCache 中的计算保持一致）

@@ -64,17 +64,17 @@ enum ColorPresets {
         var config = EnergyConfig()
         config.speed = 0.45 // 慢速流动
         config.noiseStrength = 0.05 // 减少噪声干扰
-        config.phaseScale = 1.4 // 平滑条纹
+        config.noiseScale = 1.4 // 平滑条纹
         config.noiseOctaves = 2 // 减少噪声层数
         config.glowIntensity = 1.0 // 边框发光强度
         config.edgeBoost = 1.1 // 边缘增强
 
         // 边框发光参数（贴边效果）
-        config.borderWidth = 0.006 // 更细边框
+        config.glowFalloff = 0.006 // 更细边框
         config.innerGlowIntensity = 0.35 // 内发光强度
-        config.innerGlowRange = 0.03 // 缩小内发光范围，保持贴边
+        config.innerGlowRadius = 0.03 // 缩小内发光范围，保持贴边
         config.outerGlowIntensity = 0.0 // 关闭外发光
-        config.outerGlowRange = 0.0 // 无外发光
+        config.outerGlowRadius = 0.0 // 无外发光
         config.colorFlowSpeed = 0.1 // 颜色流动速度
 
         // Bloom 效果（避免糊边）
@@ -82,7 +82,7 @@ enum ColorPresets {
         config.bloomIntensity = 0.4 // 降低强度
         config.bloomThreshold = 0.5 // 提高阈值
         config.bloomBlurRadius = 7 // 适中模糊
-        config.bloomResolutionScale = 0.5 // 提高分辨率
+        config.bloomScale = 0.5 // 提高分辨率
         config.colorStops = appleIntelligenceColors
 
         config.sdfQuality = .high
@@ -110,16 +110,16 @@ enum ColorPresets {
         var config = EnergyConfig()
         config.speed = 0.6
         config.noiseStrength = 0.12
-        config.phaseScale = 1.8
+        config.noiseScale = 1.8
         config.noiseOctaves = 2
         config.glowIntensity = 1.0
         config.edgeBoost = 1.3
 
-        config.borderWidth = 0.02
+        config.glowFalloff = 0.02
         config.innerGlowIntensity = 0.5
-        config.innerGlowRange = 0.18
+        config.innerGlowRadius = 0.18
         config.outerGlowIntensity = 0.0
-        config.outerGlowRange = 0.0
+        config.outerGlowRadius = 0.0
         config.colorFlowSpeed = 0.18
 
         config.bloomEnabled = true
@@ -152,16 +152,16 @@ enum ColorPresets {
         var config = EnergyConfig()
         config.speed = 0.7
         config.noiseStrength = 0.15
-        config.phaseScale = 2.0
+        config.noiseScale = 2.0
         config.noiseOctaves = 3
         config.glowIntensity = 1.1
         config.edgeBoost = 1.4
 
-        config.borderWidth = 0.022
+        config.glowFalloff = 0.022
         config.innerGlowIntensity = 0.55
-        config.innerGlowRange = 0.22
+        config.innerGlowRadius = 0.22
         config.outerGlowIntensity = 0.0
-        config.outerGlowRange = 0.0
+        config.outerGlowRadius = 0.0
         config.colorFlowSpeed = 0.2
 
         config.bloomEnabled = true
