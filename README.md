@@ -25,7 +25,6 @@ Apple Intelligence 风格的边缘发光动画组件 - 在任意形状边缘渲�
 - 🔥 **Bloom 辉光后处理** - 4-Pass 高质量 Bloom
 - 📐 **解析形状 SDF** - 无纹理采样的精确距离场计算
 - 🔄 **状态机动画** - idle → startup → loop ⇄ settle
-- 📊 **实时性能监控** - FPS、帧耗时、帧预算使用百分比
 
 ## 📦 安装
 
@@ -134,21 +133,6 @@ energyView.analyticShapeOverride = .ellipse(radiusX: 0.45, radiusY: 0.3)
 // 胶囊
 energyView.analyticShapeOverride = .capsule(radiusX: 0.45, radiusY: 0.12)
 ```
-
-## 📊 性能监控
-
-```swift
-energyView.delegate = self
-
-// 实现代理方法
-func energyShapeView(_ view: EnergyShapeView, didUpdateStats stats: EnergyPerformanceStats) {
-    print("FPS: \(stats.currentFPS)")
-    print("帧耗时: \(stats.totalFrameTime)ms")
-    print("帧预算使用: \(stats.frameBudgetUsage)%")
-    print("性能等级: \(stats.performanceGrade.rawValue)")
-}
-```
-
 ## 📁 项目结构
 
 ```
